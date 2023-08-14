@@ -53,6 +53,7 @@ func NewRefreshHelper(
 func (self *RefreshHelper) Refresh(options types.RefreshOptions) error {
 	t := time.Now()
 	defer func() {
+		// TODO: このなかでReloadUserConfigを呼ぶべきかもしれない
 		self.c.Log.Infof(fmt.Sprintf("Refresh took %s", time.Since(t)))
 	}()
 
@@ -171,6 +172,8 @@ func (self *RefreshHelper) Refresh(options types.RefreshOptions) error {
 		if scopeSet.Includes(types.MERGE_CONFLICTS) || scopeSet.Includes(types.FILES) {
 			refresh("merge conflicts", func() { _ = self.mergeConflictsHelper.RefreshMergeState() })
 		}
+
+		refresh("config file", func() { _ = self.c.GetConfig().ReloadUserConfig() })
 
 		self.refreshStatus()
 

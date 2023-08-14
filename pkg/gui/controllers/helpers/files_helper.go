@@ -44,12 +44,15 @@ func (self *FilesHelper) OpenDirInEditor(path string) error {
 }
 
 func (self *FilesHelper) callEditor(cmdStr string, suspend bool) error {
+	// TODO: このあたりでdefer ReloadUserConfigを呼ぶ?
 	if suspend {
+		// TODO: ここチェックする
 		return self.c.RunSubprocessAndRefresh(
 			self.c.OS().Cmd.NewShell(cmdStr),
 		)
 	}
 
+	// TODO: こっちのパスでrefreshを読んでいるかチェックする
 	return self.c.OS().Cmd.NewShell(cmdStr).Run()
 }
 
