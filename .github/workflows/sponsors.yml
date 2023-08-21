@@ -3,7 +3,8 @@ name: Generate Sponsors README
 on:
   push:
     branches:
-      - master
+      # - master
+      - fix-github-actions-warnings
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -12,7 +13,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Generate Sponsors 💖
-        uses: JamesIves/github-sponsors-readme-action@v1.0.8
+        uses: JamesIves/github-sponsors-readme-action@v1.2.2
         with:
           token: ${{ secrets.SPONSORS_TOKEN }}
           file: 'README.md'
