@@ -139,6 +139,8 @@ type TranslationSet struct {
 	ForceCheckoutTooltip                  string
 	CheckoutByName                        string
 	CheckoutByNameTooltip                 string
+	CheckoutLastBranch                    string
+	CheckoutLastBranchTooltip             string
 	RemoteBranchCheckoutTitle             string
 	RemoteBranchCheckoutPrompt            string
 	CheckoutTypeNewBranch                 string
@@ -1182,6 +1184,8 @@ func EnglishTranslationSet() *TranslationSet {
 		ForceCheckoutTooltip:                 "Force checkout selected branch. This will discard all local changes in your working directory before checking out the selected branch.",
 		CheckoutByName:                       "Checkout by name",
 		CheckoutByNameTooltip:                "Checkout by name. In the input box you can enter '-' to switch to the last branch.",
+		CheckoutLastBranch:                   "Checkout last branch",
+		CheckoutLastBranchTooltip:            "Checkout to the last branch.",
 		RemoteBranchCheckoutTitle:            "Checkout {{.branchName}}",
 		RemoteBranchCheckoutPrompt:           "How would you like to check out this branch?",
 		CheckoutTypeNewBranch:                "New local branch",

@@ -90,6 +90,12 @@ func (self *BranchesController) GetKeybindings(opts types.KeybindingsOpts) []*ty
 			Tooltip:     self.c.Tr.CheckoutByNameTooltip,
 		},
 		{
+			Key:         opts.GetKey(opts.Config.Branches.CheckoutLastBranch),
+			Handler:     self.checkoutLastBranch,
+			Description: self.c.Tr.CheckoutLastBranch,
+			Tooltip:     self.c.Tr.CheckoutLastBranchTooltip,
+		},
+		{
 			Key:               opts.GetKey(opts.Config.Branches.ForceCheckoutBranch),
 			Handler:           self.forceCheckout,
 			GetDisabledReason: self.require(self.singleItemSelected()),
@@ -481,6 +487,11 @@ func (self *BranchesController) forceCheckout() error {
 	})
 
 	return nil
+}
+
+func (self *BranchesController) checkoutLastBranch() error {
+	self.c.LogAction(self.c.Tr.Actions.CheckoutBranch)
+	return self.c.Helpers().Refs.CheckoutRef("-", types.CheckoutRefOptions{})
 }
 
 func (self *BranchesController) checkoutByName() error {
