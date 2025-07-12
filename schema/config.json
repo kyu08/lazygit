@@ -836,6 +836,10 @@
           "type": "string",
           "default": "F"
         },
+        "checkoutLastBranch": {
+          "type": "string",
+          "default": "-"
+        },
         "rebaseBranch": {
           "type": "string",
           "default": "r"

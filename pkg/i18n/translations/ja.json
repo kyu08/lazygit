@@ -131,6 +131,8 @@
   "ForceCheckoutTooltip": "選択したブランチを強制的にチェックアウトします。これにより、選択したブランチをチェックアウトする前にワーキングディレクトリ内のすべてのローカル変更が破棄されます。",
   "CheckoutByName": "名前でチェックアウト",
   "CheckoutByNameTooltip": "名前でチェックアウトします。入力ボックスに「-」を入力すると、最後のブランチをチェックアウトすることができます。",
+  "CheckoutLastBranch": "1つ前のブランチにチェックアウト",
+  "CheckoutLastBranchTooltip": "直前にチェックアウトしていたブランチに切り替えます。",
   "RemoteBranchCheckoutTitle": "{{.branchName}}をチェックアウト",
   "RemoteBranchCheckoutPrompt": "このブランチをどのようにチェックアウトしますか？",
   "CheckoutTypeNewBranch": "新しいローカルブランチ",

@@ -627,6 +627,7 @@ keybinding:
     copyPullRequestURL: <c-y>
     checkoutBranchByName: c
     forceCheckoutBranch: F
+    checkoutLastBranch: '-'
     rebaseBranch: r
     renameBranch: R
     mergeIntoCurrentBranch: M
