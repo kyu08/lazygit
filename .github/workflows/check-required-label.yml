@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref != 'refs/heads/master'
     steps:
+      # foo
       - uses: mheap/github-action-required-labels@v5
         with:
           mode: exactly
