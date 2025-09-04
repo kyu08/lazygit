@@ -122,14 +122,34 @@ func (self *RefreshHelper) Refresh(options types.RefreshOptions) {
 			// whenever we change commits, we should update branches because the upstream/downstream
 			// counts can change. Whenever we change branches we should also change commits
 			// e.g. in the case of switching branches.
-			refresh("commits and commit files", self.refreshCommitsAndCommitFiles)
 
-			includeWorktreesWithBranches = scopeSet.Includes(types.WORKTREES)
-			if self.c.UserConfig().Git.LocalBranchSortOrder == "recency" {
-				refresh("reflog and branches", func() { self.refreshReflogAndBranches(includeWorktreesWithBranches, options.KeepBranchSelectionIndex) })
+			// To avoid lock ordering issues, we run these sequentially when both commits and branches need updating
+			if scopeSet.Includes(types.COMMITS) && (scopeSet.Includes(types.BRANCHES) || scopeSet.Includes(types.REFLOG)) {
+				includeWorktreesWithBranches = scopeSet.Includes(types.WORKTREES)
+				refresh("commits and branches", func() {
+					self.refreshCommitsAndCommitFiles()
+
+					if self.c.UserConfig().Git.LocalBranchSortOrder == "recency" {
+						self.refreshReflogAndBranches(includeWorktreesWithBranches, options.KeepBranchSelectionIndex)
+					} else {
+						self.refreshBranches(includeWorktreesWithBranches, options.KeepBranchSelectionIndex, true)
+						_ = self.refreshReflogCommits()
+					}
+				})
 			} else {
-				refresh("branches", func() { self.refreshBranches(includeWorktreesWithBranches, options.KeepBranchSelectionIndex, true) })
-				refresh("reflog", func() { _ = self.refreshReflogCommits() })
+				if scopeSet.Includes(types.COMMITS) {
+					refresh("commits and commit files", self.refreshCommitsAndCommitFiles)
+				}
+
+				includeWorktreesWithBranches = scopeSet.Includes(types.WORKTREES)
+				if scopeSet.Includes(types.BRANCHES) || scopeSet.Includes(types.REFLOG) {
+					if self.c.UserConfig().Git.LocalBranchSortOrder == "recency" {
+						refresh("reflog and branches", func() { self.refreshReflogAndBranches(includeWorktreesWithBranches, options.KeepBranchSelectionIndex) })
+					} else {
+						refresh("branches", func() { self.refreshBranches(includeWorktreesWithBranches, options.KeepBranchSelectionIndex, true) })
+						refresh("reflog", func() { _ = self.refreshReflogCommits() })
+					}
+				}
 			}
 		} else if scopeSet.Includes(types.REBASE_COMMITS) {
 			// the above block handles rebase commits so we only need to call this one
@@ -497,9 +517,10 @@ func (self *RefreshHelper) refreshBranches(refreshWorktrees bool, keepBranchSele
 
 	// Need to re-render the commits view because the visualization of local
 	// branch heads might have changed
-	self.c.Mutexes().LocalCommitsMutex.Lock()
-	self.c.Contexts().LocalCommits.HandleRender()
-	self.c.Mutexes().LocalCommitsMutex.Unlock()
+	self.c.OnUIThread(func() error {
+		self.c.Contexts().LocalCommits.HandleRender()
+		return nil
+	})
 
 	self.refreshStatus()
 }
