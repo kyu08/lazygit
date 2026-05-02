@@ -1,7 +1,6 @@
 package presentation
 
 import (
-	"os"
 	"strings"
 	"testing"
 	"time"
@@ -530,8 +529,6 @@ func TestGetCommitListDisplayStrings(t *testing.T) {
 
 	oldColorLevel := color.ForceSetColorLevel(terminfo.ColorLevelNone)
 	defer color.ForceSetColorLevel(oldColorLevel)
-
-	os.Setenv("TZ", "UTC")
 
 	focusing := false
 	for _, scenario := range scenarios {
