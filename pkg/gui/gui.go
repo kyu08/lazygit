@@ -428,6 +428,8 @@ func (gui *Gui) onNewRepo(startArgs appTypes.StartArgs, contextKey types.Context
 
 	gui.c.Context().Push(contextToPush, types.OnFocusOpts{})
 
+	gui.render()
+
 	return nil
 }
 
