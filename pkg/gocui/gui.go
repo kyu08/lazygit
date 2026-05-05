@@ -779,7 +779,7 @@ func (g *Gui) processEvent() error {
 	contentOnly = contentOnly && remainingContentOnly
 
 	if contentOnly {
-		return g.flushContentOnly()
+		return g.flushContentOnly(g.views)
 	}
 	return g.flush()
 }
@@ -1167,32 +1167,11 @@ func (g *Gui) flush() error {
 	return nil
 }
 
-func (g *Gui) ForceLayoutAndRedraw() error {
-	return g.flush()
-}
-
-// force redrawing one or more views outside of the normal main loop. Useful during longer
-// operations that block the main thread, to update a spinner in a status view.
-func (g *Gui) ForceRedrawViews(views ...*View) error {
-	for _, m := range g.managers {
-		if err := m.Layout(g); err != nil {
-			return err
-		}
-	}
-
-	for _, v := range views {
-		v.draw()
-	}
-
-	Screen.Show()
-	return nil
-}
-
 // Redraws only tainted views and skips the layout pass.
 // tcell's cell-level dirty tracking ensures only
 // actually-changed cells are emitted to the terminal.
-func (g *Gui) flushContentOnly() error {
-	for _, v := range g.views {
+func (g *Gui) flushContentOnly(views []*View) error {
+	for _, v := range views {
 		if !v.tainted {
 			continue
 		}
@@ -1203,6 +1182,17 @@ func (g *Gui) flushContentOnly() error {
 
 	Screen.Show()
 	return nil
+}
+
+func (g *Gui) ForceLayoutAndRedraw() error {
+	return g.flush()
+}
+
+// Redraws only tainted views outside of the normal main
+// loop, without a layout pass. Useful during longer operations that block the
+// main thread, e.g. to update a spinner in a status view.
+func (g *Gui) ForceFlushViewsContentOnly(views []*View) error {
+	return g.flushContentOnly(views)
 }
 
 // draw manages the cursor and calls the draw function of a view.

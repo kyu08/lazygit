@@ -136,7 +136,7 @@ func (self *AppStatusHelper) renderAppStatusSync(stop chan struct{}) {
 					self.c.Views().AppStatus, self.c.Views().Options, self.c.Views().Information,
 					self.c.Views().StatusSpacer1, self.c.Views().StatusSpacer2,
 				}
-				_ = self.c.GocuiGui().ForceRedrawViews(bottomLineViews...)
+				_ = self.c.GocuiGui().ForceFlushViewsContentOnly(bottomLineViews)
 			case <-stop:
 				break outer
 			}
