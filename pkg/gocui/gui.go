@@ -555,17 +555,6 @@ func (g *Gui) SetKeybinding(viewname string, key Key, mod Modifier, handler func
 	return nil
 }
 
-// DeleteKeybinding deletes a keybinding.
-func (g *Gui) DeleteKeybinding(viewname string, key Key, mod Modifier) error {
-	for i, kb := range g.keybindings {
-		if kb.viewName == viewname && kb.key.keyName == key.KeyName() && kb.key.str == key.str && kb.mod == mod {
-			g.keybindings = append(g.keybindings[:i], g.keybindings[i+1:]...)
-			return nil
-		}
-	}
-	return errors.New("keybinding not found")
-}
-
 // DeleteKeybindings deletes all keybindings of view.
 func (g *Gui) DeleteAllKeybindings() {
 	g.keybindings = []*keybinding{}
