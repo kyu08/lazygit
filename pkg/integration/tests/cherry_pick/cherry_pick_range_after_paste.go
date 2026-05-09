@@ -81,10 +81,7 @@ var CherryPickRangeAfterPaste = NewIntegrationTest(NewIntegrationTestArgs{
 			Press(keys.Universal.RangeSelectDown).
 			Press(keys.Commits.CherryPickCopy).
 			Tap(func() {
-				/* EXPECTED:
 				t.Views().Information().Content(Contains("3 commits copied"))
-				ACTUAL: */
-				t.Views().Information().Content(Contains("1 commit copied"))
 			})
 
 		t.Views().Commits().
@@ -94,23 +91,13 @@ var CherryPickRangeAfterPaste = NewIntegrationTest(NewIntegrationTestArgs{
 			Tap(func() {
 				t.ExpectPopup().Alert().
 					Title(Equals("Cherry-pick")).
-					/* EXPECTED:
 					Content(Equals("Are you sure you want to cherry-pick the 3 copied commit(s) onto this branch?")).
-					ACTUAL: */
-					Content(Equals("Are you sure you want to cherry-pick the 1 copied commit(s) onto this branch?")).
 					Confirm()
 			})
 
-		/* EXPECTED:
 		t.Views().Commits().Lines(
 			Contains("four"),
 			Contains("three"),
-			Contains("two"),
-			Contains("five"),
-			Contains("base").IsSelected(),
-		)
-		ACTUAL: */
-		t.Views().Commits().Lines(
 			Contains("two"),
 			Contains("five"),
 			Contains("base").IsSelected(),
