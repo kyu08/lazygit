@@ -831,9 +831,7 @@ func (self *RefreshHelper) refreshGithubPullRequests() {
 		return
 	}
 
-	if err := self.setGithubPullRequests(baseInfo); err != nil {
-		self.c.LogAction(fmt.Sprintf("Error fetching pull requests from GitHub: %s", err.Error()))
-	}
+	self.setGithubPullRequests(baseInfo)
 }
 
 type githubRemoteInfo struct {
@@ -914,9 +912,7 @@ func (self *RefreshHelper) promptForBaseGithubRepo(githubRemotes []githubRemoteI
 						self.c.Log.Error(err)
 					}
 
-					if err := self.setGithubPullRequests(&info); err != nil {
-						self.c.LogAction(fmt.Sprintf("Error fetching pull requests from GitHub: %s", err.Error()))
-					}
+					self.setGithubPullRequests(&info)
 					return nil
 				})
 			},
@@ -944,9 +940,9 @@ func (self *RefreshHelper) rebuildPullRequestsMap() {
 	)
 }
 
-func (self *RefreshHelper) setGithubPullRequests(baseInfo *githubRemoteInfo) error {
+func (self *RefreshHelper) setGithubPullRequests(baseInfo *githubRemoteInfo) {
 	if len(self.c.Model().Branches) == 0 {
-		return nil
+		return
 	}
 
 	branches := lo.Filter(self.c.Model().Branches, func(branch *models.Branch, _ int) bool {
@@ -958,7 +954,8 @@ func (self *RefreshHelper) setGithubPullRequests(baseInfo *githubRemoteInfo) err
 
 	prs, err := self.c.Git().GitHub.FetchRecentPRs(branchNames, &baseInfo.serviceInfo, baseInfo.authToken)
 	if err != nil {
-		return err
+		self.c.LogAction(fmt.Sprintf("Error fetching pull requests from GitHub: %s", err.Error()))
+		return
 	}
 
 	self.c.Model().PullRequests = prs
@@ -969,8 +966,6 @@ func (self *RefreshHelper) setGithubPullRequests(baseInfo *githubRemoteInfo) err
 		self.c.PostRefreshUpdate(self.c.Contexts().Branches)
 		return nil
 	})
-
-	return nil
 }
 
 func (self *RefreshHelper) savePullRequestsToCache(prs []*models.GithubPullRequest) {
