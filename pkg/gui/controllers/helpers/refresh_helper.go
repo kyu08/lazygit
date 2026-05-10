@@ -1,7 +1,6 @@
 package helpers
 
 import (
-	"fmt"
 	"strings"
 	"sync"
 	"time"
@@ -954,7 +953,7 @@ func (self *RefreshHelper) setGithubPullRequests(baseInfo *githubRemoteInfo) {
 
 	prs, err := self.c.Git().GitHub.FetchRecentPRs(branchNames, &baseInfo.serviceInfo, baseInfo.authToken)
 	if err != nil {
-		self.c.LogAction(fmt.Sprintf("Error fetching pull requests from GitHub: %s", err.Error()))
+		self.c.Log.Error("error fetching pull requests from GitHub: " + err.Error())
 		return
 	}
 
